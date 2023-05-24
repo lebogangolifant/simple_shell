@@ -17,7 +17,7 @@
 
 /* Declare external variables */
 extern char **environ;
-extern const char *hsh;
+extern const char *simpleshell;
 
 /* Declare function prototypes*/
 void display_prompt(bool interactive);
