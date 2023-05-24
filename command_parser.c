@@ -81,7 +81,8 @@ char **parse_line(char *line)
 {
 	const char *delimiters = " \t\r\n";
 	const char *comment_char = "#";
-	char **args = malloc(BUFFER_SIZE * sizeof(char *));
+	char **args = malloc((MAX_TOKENS + 1) * sizeof(char *));
+	/*char **args = malloc(BUFFER_SIZE * sizeof(char *));*/
 	char *token;
 	int arg_index = 0;
 
