@@ -60,14 +60,14 @@ int execute_commands(char **commands)
 
 void free_commands(char ***commands)
 {
-	/*char **current_command = *commands;*/
+	char **current_command = *commands;
 
 	if (commands == NULL || *commands == NULL)
 	{
 		return;
 	}
 
-	char **current_command = *commands;
+	/*char **current_command = *commands;*/
 
 	while (*current_command != NULL)
 	{
