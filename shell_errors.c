@@ -8,7 +8,6 @@
 
 void handle_error(const char *message)
 {
-	write(STDERR_FILENO, message, strlen(message));
-	write(STDERR_FILENO, "\n", 1);
+	fprintf(stderr, "%s: %s\n", PROGRAM_NAME, message);
 }
 
