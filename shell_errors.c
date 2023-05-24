@@ -8,6 +8,6 @@
 
 void handle_error(const char *message)
 {
-	fprintf(stderr, "%s: %s\n", simpleshell, message);
+	fprintf(stderr, "%s: %s\n", hsh, message);
 }
 

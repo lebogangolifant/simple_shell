@@ -14,8 +14,6 @@ int execute_shell(void)
 	char *command;
 	char **commands;
 	int exit_status = 0;
-	int prompt_length = 2;
-	char prompt[prompt_length];
 
 	while ((characters_read = getline(&line, &line_size, stdin)) != -1)
 	{
@@ -34,9 +32,9 @@ int execute_shell(void)
 		free(command);
 		free(commands);
 
-		write(STDOUT_FILENO, "~ ", prompt_length);
+		write(STDOUT_FILENO, "~ ", PROMPT_LENGTH);
 	}
-	ree(line);
+	free(line);
 	return (exit_status);
 }
 
@@ -49,7 +47,7 @@ int execute_shell(void)
  * Return: The shell program's exit status.
  */
 
-int main(int argc, char **argv)
+int main(void)
 {
 	if (!isatty(STDIN_FILENO))
 	{
@@ -57,10 +55,8 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		int prompt_length = 2;
-		char prompt[prompt_length];
 
-		write(STDOUT_FILENO, "~ ", prompt_length);
+		write(STDOUT_FILENO, "~ ", PROMPT_LENGTH);
 		return (execute_shell());
 	}
 }
