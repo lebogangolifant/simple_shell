@@ -28,7 +28,7 @@ int execute_commands(char **commands)
 	if (pid == -1)
 	{
 		handle_error("fork failed");
-		exit(EXIT_FAILURE);
+		return(EXIT_FAILURE);
 	} else if
 		(pid == 0)
 		{
