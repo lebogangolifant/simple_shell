@@ -1,52 +1,72 @@
 #include "simple_shell.h"
 
 /**
- * main - Entry point of the simple_shell program.
+ * main - Entry point of the shell program.
  *
- * Description: This function serves as the entry point for the shell program.
- * It implements the main execution loop, where it repeatedly displays
- * the prompt, reads the user's input command, parses the command,
- * executes the commands, and handles any errors.
+ * @argc: The number of command-line arguments.
  *
- * Return: The exit status of the shell program.
+ * @argv: An array of command-line argument strings.
+ *
+ * Return: The shell program's exit status.
  */
 
-int main(void)
+int main(int argc, char **argv)
 {
 	char *line = NULL;
-	size_t lineSize = 0;
-	ssize_t bytesRead;
-	int exit_status = 0;
+	size_t line_size = 0;
+	ssize_t characters_read;
+	char *command;
 	char **commands;
+	int exit_status = 0;
+	int prompt_length = 2;
+	char prompt[prompt_length];
 
-	const char prompt[] = "~ ";
-
-	while (true)
+	if (!isatty(STDIN_FILENO))
 	{
-		write(STDOUT_FILENO, prompt, sizeof(prompt) - 1);
-		bytesRead = input_getline(&line, &lineSize, stdin);
-
-		if (bytesRead == -1)
+		while ((characters_read = getline(&line, &line_size, stdin))
+				!= -1)
 		{
-			break;
-		}
-
-		/*char **commands;*/
-		commands = parse_line(line);
-		if (commands != NULL && commands[0] != NULL)
-		{
-			if (strcmp(commands[0], "exit") == 0)
+			line[characters_read - 1] = '\0';
+			command = strdup(line);
+			commands = malloc(2 * sizeof(char *));
+			commands[0] = command;
+			commands[1] = NULL;
+			replace_variables(commands);
+			exit_status = execute_commands(commands);
+			free(command);
+			free(commands);
+			if (exit_status == -1)
 			{
-				free_commands(&commands);
 				break;
 			}
-			exit_status = execute_commands(commands);
-			free_commands(&commands);
 		}
+		free(line);
 	}
+	else
+	{
+		write(STDOUT_FILENO, "~ ", prompt_length);
 
-	free(line);
-	/*line = NULL;*/
-	/*lineSize = 0;*/
+		while ((characters_read = getline(&line, &line_size, stdin))
+				!= -1)
+		{
+			line[characters_read - 1] = '\0';
+			if (strcmp(line, "exit") == 0)
+			{
+				break;
+			}
+			command = strdup(line);
+			commands = malloc(2 * sizeof(char *));
+			commands[0] = command;
+			commands[1] = NULL;
+			replace_variables(commands);
+			exit_status = execute_commands(commands);
+			free(command);
+			free(commands);
+
+			write(STDOUT_FILENO, "~ ", prompt_length);
+		}
+		free(line);
+	}
 	return (exit_status);
 }
+
