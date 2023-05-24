@@ -16,18 +16,15 @@
 
 /* Declare external variables */
 extern char **environ;
+extern const char *hsh;
 
 /* Declare function prototypes*/
 void display_prompt(bool interactive);
 void read_command(char *buffer, bool interactive);
 void parse_command(char *line, char **args);
-
-/*int execute_command(char **args);*/
-
 int execute_commands(char **commands);
 void handle_error(const char *message);
 void builtin_exit(char **args);
-/*void builtin_env();*/
 void builtin_env(void);
 void builtin_setenv(char **args);
 void builtin_unsetenv(char **args);
@@ -35,6 +32,7 @@ void builtin_cd(char **args);
 void replace_variables(char **args);
 char **parse_line(char *line);
 void free_commands(char ***commands);
+int execute_shell(void);
 
 /* Declare custom function prototypes */
 ssize_t input_getline(char **lineptr, size_t *n, FILE *stream);
