@@ -10,7 +10,7 @@
  * Return: Number of bytes read.
  */
 
-ssize_t input_getline(char **lineptr, size_t *n, FILE *stream)
+ssize_t getline_wrapper(char **lineptr, size_t *n, FILE *stream)
 {
 	ssize_t bytesRead = getline(lineptr, n, stream);
 
