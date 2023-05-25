@@ -67,7 +67,6 @@ void free_commands(char ***commands)
 		return;
 	}
 
-	/*char **current_command = *commands;*/
 	while (*current_command != NULL)
 	{
 		free(*current_command);
