@@ -1,7 +1,7 @@
 #include "simple_shell.h"
 
 /**
- * input_getline - Reads a line of input from a stream.
+ * getline_wrapper - Reads a line of input from a stream.
  *
  * @lineptr: Pointer to the buffer storing the line.
  * @n: Pointer to the size of the buffer.
