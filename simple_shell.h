@@ -21,13 +21,9 @@ extern char **environ;
 void display_prompt(bool interactive);
 void read_command(char *buffer, bool interactive);
 void parse_command(char *line, char **args);
-
-/*int execute_command(char **args);*/
-
 int execute_commands(char **commands);
 void handle_error(const char *message);
 void builtin_exit(char **args);
-/*void builtin_env();*/
 void builtin_env(void);
 void builtin_setenv(char **args);
 void builtin_unsetenv(char **args);
@@ -37,7 +33,7 @@ char **parse_line(char *line);
 void free_commands(char ***commands);
 
 /* Declare custom function prototypes */
-ssize_t input_getline(char **lineptr, size_t *n, FILE *stream);
+ssize_t getline_wrapper(char **lineptr, size_t *n, FILE *stream);
 
 #endif /* SIMPLE_SHELL_H */
 
