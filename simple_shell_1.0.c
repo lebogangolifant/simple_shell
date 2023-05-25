@@ -19,7 +19,7 @@ int main(void)
 	int exit_status = 0;
 	char **commands;
 
-	const char prompt[] = "~ ";
+	const char prompt[] = "($)\n ";
 
 	while (true)
 	{
