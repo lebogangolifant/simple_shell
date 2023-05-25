@@ -24,7 +24,7 @@ int main(void)
 	while (true)
 	{
 		write(STDOUT_FILENO, prompt, sizeof(prompt) - 1);
-		bytesRead = input_getline(&line, &lineSize, stdin);
+		bytesRead = getline_wrapper(&line, &lineSize, stdin);
 
 		if (bytesRead == -1)
 		{
