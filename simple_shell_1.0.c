@@ -19,7 +19,8 @@ int main(void)
 	int exit_status = 0;
 	char **commands;
 
-	const char prompt[] = "($)\n ";
+	const char prompt[] = "~ ";
+
 
 	while (true)
 	{
@@ -31,7 +32,6 @@ int main(void)
 			break;
 		}
 
-		/*char **commands;*/
 		commands = parse_line(line);
 		if (commands != NULL && commands[0] != NULL)
 		{
@@ -44,9 +44,6 @@ int main(void)
 			free_commands(&commands);
 		}
 	}
-
 	free(line);
-	/*line = NULL;*/
-	/*lineSize = 0;*/
 	return (exit_status);
 }
