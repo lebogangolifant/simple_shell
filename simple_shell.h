@@ -5,38 +5,25 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 
-#define BUFFER_SIZE 1024
-#define MAX_TOKENS 128
+#define TOK_DELIM " \t\r\n\a\""
 
-/* Declare external variables */
+/* Global variables declaration */
 extern char **environ;
 
-/* Declare function prototypes*/
-void display_prompt(bool interactive);
-void read_command(char *buffer, bool interactive);
-void parse_command(char *line, char **args);
+/* Funtion Prototypes declaration */
+int execute_external_commands(char **commands);
 int execute_commands(char **commands);
-void execute_child(char **commands);
-void execute_parent(pid_t pid);
-void write_newline(void);
-void handle_error(const char *message);
-void builtin_exit(char **args);
-void builtin_env(void);
-void builtin_setenv(char **args);
-void builtin_unsetenv(char **args);
-void builtin_cd(char **args);
-void replace_variables(char **args);
-char **parse_line(char *line);
-void free_commands(char ***commands);
-
-/* Declare custom function prototypes */
-ssize_t getline_wrapper(char **lineptr, size_t *n, FILE *stream);
+void interactive_mode(void);
+void non_interactive_mode(void);
+char *read_stream_input(void);
+char **split_input(char *input);
+char *read_input(void);
+int change_directory(char **args);
+int print_environment(char **args);
+int display_help(char **args);
+int exit_shell(char **args);
 
 #endif /* SIMPLE_SHELL_H */
 

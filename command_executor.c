@@ -1,115 +1,84 @@
 #include "simple_shell.h"
 
 /**
- * execute_commands - Executes multiple commands.
+ * execute_commands - Execute shell commands.
  *
  * @commands: Array of commands to execute.
  *
- * Return: The exit status of the last executed command.
+ * Return: void
  */
 
 int execute_commands(char **commands)
 {
-	int exit_status = 0;
-	pid_t pid;
+	char *builtin_commands[] = {
+		"cd",
+		"env",
+		"help",
+		"exit"
+	};
 
-	if (commands == NULL || commands[0] == NULL)
-	{
-		return (0);
-	}
-	if (strcmp(commands[0], "exit") == 0)
+	int (*builtin_functions[])(char **) = {
+		&change_directory,
+		&print_environment,
+		&display_help,
+		&exit_shell
+	};
+
+	int builtin_index = 0;
+	int num_builtins = sizeof(builtin_commands) / sizeof(char *);
+	int status = -1;
+
+	if (commands[0] == NULL)
 	{
 		return (-1);
 	}
-	pid = fork();
-	if (pid == -1)
+	while (builtin_index < num_builtins)
 	{
-		handle_error("fork failed");
-		exit(EXIT_FAILURE);
-	} else if
-		(pid == 0)
+		if (strcmp(commands[0], builtin_commands[builtin_index]) == 0)
 		{
-			execute_child(commands);
-		} else
-		{
-			execute_parent(pid);
+			status = (*builtin_functions[builtin_index])(commands);
+			break;
 		}
-		return (exit_status);
-}
-
-/**
- * execute_child - Executes the child process.
- * @commands: Array of commands to execute.
- */
-
-void execute_child(char **commands)
-{
-	if (execvp(commands[0], commands) == -1)
-	{
-		handle_error("execvp failed");
-		exit(EXIT_FAILURE);
+		builtin_index++;
 	}
+	if (status == -1)
+	{
+		status = execute_external_commands(commands);
+	}
+	return (status);
 }
 
 /**
- * execute_parent - Executes the parent process.
- * @pid: Process ID of the child process.
+ * execute_external_commands - Execute external commands.
+ *
+ * @commands: Array of commands to execute.
+ *
+ * Return: void
  */
 
-void execute_parent(pid_t pid)
+int execute_external_commands(char **commands)
 {
-	int exit_status;
+	pid_t pid;
 	int status;
 
-	if (waitpid(pid, &status, 0) == -1)
+	pid = fork();
+	if (pid == 0)
 	{
-		handle_error("waitpid failed");
+		if (execvp(commands[0], commands) == -1)
+		{
+			perror("Error in execute_external_commands: child process");
+		}
 		exit(EXIT_FAILURE);
-	}
-
-	if (WIFEXITED(status))
-	{
-		exit_status = WEXITSTATUS(status);
-	}
-	if (isatty(STDIN_FILENO) && !isatty(STDOUT_FILENO))
-	{
-		write_newline();
-	}
-	exit_status = exit_status;
+	} else if
+		(pid < 0)
+		{
+			perror("Error in execute_external_commands: forking");
+		} else
+		{
+			do {
+				waitpid(pid, &status, WUNTRACED);
+			} while
+			(!WIFEXITED(status) && !WIFSIGNALED(status));
+		}
+		return (-1);
 }
-
-/**
- * write_newline - Writes a newline character to the standard output.
- */
-
-void write_newline(void)
-{
-	const char newline = '\n';
-
-	write(STDOUT_FILENO, &newline, 1);
-}
-
-/**
- * free_commands - Frees the memory allocated for the commands array.
- *
- * @commands: Pointer to the commands array.
- */
-
-void free_commands(char ***commands)
-{
-	char **current_command = *commands;
-
-	if (commands == NULL || *commands == NULL)
-	{
-		return;
-	}
-
-	while (*current_command != NULL)
-	{
-		free(*current_command);
-		current_command++;
-	}
-	free(*commands);
-	*commands = NULL;
-}
-

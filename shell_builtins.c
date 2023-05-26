@@ -1,110 +1,79 @@
 #include "simple_shell.h"
 
 /**
- * builtin_exit - Handles the built-in exit command.
+ * change_directory - Change the current working directory
+ * @args: Array of strings containing the arguments
  *
- * @args: Arguments for the exit command.
+ * Return: 1 on success, 0 otherwise
  */
 
-void builtin_exit(char **args)
+int change_directory(char **args)
 {
-	if (args[1] != NULL)
+	if (args[1] == NULL)
 	{
-		int exit_status = atoi(args[1]);
-
-		exit(exit_status);
-	} else
-	{
-		exit(EXIT_SUCCESS);
+		fprintf(stderr, "Expected argument to \"cd\"\n");
+		return (0);
 	}
+	if (chdir(args[1]) != 0)
+	{
+		perror("cd");
+		return (0);
+	}
+	return (1);
 }
 
 /**
- * builtin_env - Handles the built-in env command.
+ * print_environment - Print the environment variables
+ * @args: Array of strings containing the arguments
+ *
+ * Return: 1 on success, 0 otherwise
  */
 
-void builtin_env(void)
+int print_environment(char **args)
 {
 	char **env = environ;
+	(void)args;
 
-	while (*env)
+	while (*env != NULL)
 	{
 		write(STDOUT_FILENO, *env, strlen(*env));
 		write(STDOUT_FILENO, "\n", 1);
 		env++;
 	}
+	return (1);
 }
 
 /**
- * builtin_setenv - Handles the built-in setenv command.
+ * display_help - Display help information
+ * @args: Array of strings containing the arguments
  *
- * @args: Arguments for the setenv command.
+ * Return: 1 on success, 0 otherwise
  */
 
-void builtin_setenv(char **args)
+int display_help(char **args)
 {
-	if (args[1] == NULL || args[2] == NULL)
-	{
-		fprintf(stderr, "Usage: setenv VARIABLE VALUE\n");
-		return;
-	}
-	if (setenv(args[1], args[2], 1) == -1)
-	{
-		fprintf(stderr, "Failed to set environment variable\n");
-	}
+	char *help_info =
+		"Help information:\n"
+		" - cd: Change directory\n"
+		" - env: Print environment variables\n"
+		" - help: Display help information\n"
+		" - exit: Exit the shell\n";
+	(void)args;
+
+	write(STDOUT_FILENO, help_info, strlen(help_info));
+	return (1);
 }
 
 /**
- * builtin_unsetenv - Handles the built-in unsetenv command.
+ * exit_shell - Exit the shell
+ * @args: Array of strings containing the arguments
  *
- * @args: Arguments for the unsetenv command.
+ * Return: 1 on success, 0 otherwise
  */
 
-void builtin_unsetenv(char **args)
+int exit_shell(char **args)
 {
-	if (args[1] == NULL)
-	{
-		fprintf(stderr, "Usage: unsetenv VARIABLE\n");
-		return;
-	}
-	if (unsetenv(args[1]) == -1)
-	{
-		fprintf(stderr, "Failed to unset environment variable\n");
-	}
+	(void)args;
+
+	return (1);
 }
-
-/**
- * builtin_cd - Handles the built-in cd command.
- *
- * @args: Arguments for the cd command.
- */
-
-void builtin_cd(char **args)
-{
-	const char *home_dir = getenv("HOME");
-	const char *oldpwd_dir = getenv("OLDPWD");
-	const char *target_dir = args[1];
-	char cwd[PATH_MAX];
-
-	if (target_dir == NULL || strcmp(target_dir, "~") == 0)
-	{
-		target_dir = home_dir;
-	} else if
-		(strcmp(target_dir, "-") == 0)
-		{
-			target_dir = oldpwd_dir;
-		}
-	if (target_dir == NULL || chdir(target_dir) == -1)
-	{
-		fprintf(stderr, "Failed to change directory\n");
-		return;
-	}
-	setenv("OLDPWD", getenv("PWD"), 1);
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
-	{
-		fprintf(stderr, "Failed to get current working directory\n");
-		return;
-	}
-	setenv("PWD", cwd, 1);
-}
-
